@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import * as counterActions from "./redux/actions/counter";
 
-import { createStore, bindActionCreators } from "redux";
+import { createStore, bindActionCreators } from "./redux";
 
 const initialState = {
   number: 0,
