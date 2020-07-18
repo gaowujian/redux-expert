@@ -1,26 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import * as counterActions from "./redux/actions/counter";
+import * as counter1Actions from "./redux/actions/counter1";
+import * as counter2Actions from "./redux/actions/counter2";
 
-import { createStore, bindActionCreators } from "./redux";
+import { createStore, bindActionCreators } from "redux";
+import rootReducer from "./redux/reducers";
 
-const initialState = {
-  number: 0,
-};
-
-const reducer = (state = initialState, { type }) => {
-  switch (type) {
-    case "add":
-      return { ...state, number: state.number + 1 };
-
-    case "minus":
-      return { ...state, number: state.number - 1 };
-    default:
-      return state;
-  }
-};
-
-const store = createStore(reducer);
+const store = createStore(rootReducer);
 
 // 当参数是function的时候
 // const add = bindActionCreators(counterActions.add, store.dispatch);
@@ -28,46 +14,68 @@ const store = createStore(reducer);
 
 // 当参数是对象的时候
 
-const boundCounterActions = bindActionCreators(counterActions, store.dispatch);
+const boundCounter1Actions = bindActionCreators(
+  counter1Actions,
+  store.dispatch
+);
+const boundCounter2Actions = bindActionCreators(
+  counter2Actions,
+  store.dispatch
+);
 
-class App extends React.Component {
+class Counter1 extends React.Component {
   constructor() {
     super();
-    this.state = store.getState();
+    this.state = store.getState().counter1;
+    console.log(this.state);
   }
   render() {
     return (
       <div>
         <h1>Counter案例</h1>
         <p>number:{this.state.number}</p>
-        <button onClick={boundCounterActions.add}>+</button>
-        <button onClick={boundCounterActions.minus}>-</button>
-        <br />
-        <button
-          onClick={() => {
-            this.unsubscribe = store.subscribe(() => {
-              this.setState(store.getState());
-            });
-          }}
-        >
-          添加监听
-        </button>
-        <button
-          onClick={() => {
-            this.unsubscribe();
-          }}
-        >
-          取消监听{" "}
-        </button>
+        <button onClick={boundCounter1Actions.add}>+</button>
+        <button onClick={boundCounter1Actions.minus}>-</button>
       </div>
     );
   }
   componentDidMount() {
     const unsubscribe = store.subscribe(() => {
-      this.setState(store.getState());
+      this.setState(store.getState().counter1);
     });
     this.unsubscribe = unsubscribe;
   }
 }
 
-ReactDOM.render(<App />, document.getElementById("root"));
+class Counter2 extends React.Component {
+  constructor() {
+    super();
+    this.state = store.getState().counter2;
+  }
+  render() {
+    return (
+      <div>
+        <h1>Counter案例</h1>
+        <p>number:{this.state.number}</p>
+        <button onClick={boundCounter2Actions.add}>+</button>
+        <button onClick={boundCounter2Actions.minus}>-</button>
+        <br />
+      </div>
+    );
+  }
+  componentDidMount() {
+    const unsubscribe = store.subscribe(() => {
+      this.setState(store.getState().counter2);
+    });
+    this.unsubscribe = unsubscribe;
+  }
+}
+
+ReactDOM.render(
+  <div>
+    <Counter1 />
+    <br />
+    <Counter2 />
+  </div>,
+  document.getElementById("root")
+);

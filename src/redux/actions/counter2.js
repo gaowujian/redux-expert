@@ -1,7 +1,7 @@
 //  action 生成器
 export const add = function () {
-  return { type: "add" };
+  return { type: "add2" };
 };
 export const minus = function () {
-  return { type: "minus" };
+  return { type: "minus2" };
 };

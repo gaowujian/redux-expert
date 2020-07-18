@@ -10,12 +10,13 @@ function bindActionCreators(actionCreators, dispatch) {
 
   const boundActionCreators = {};
   const actionCreatorsKeys = Object.keys(actionCreators);
+
   actionCreatorsKeys.forEach((key) => {
     boundActionCreators[key] = function () {
       dispatch(actionCreators[key]());
     };
   });
-  console.log("bound", boundActionCreators);
+
   return boundActionCreators;
 }
 
