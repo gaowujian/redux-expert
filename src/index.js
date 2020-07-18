@@ -1,17 +1,70 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React from "react";
+import ReactDOM from "react-dom";
+import { createContext } from "./React";
+const ThemeContext = createContext(null);
+class Home extends React.Component {
+  state = {
+    color: "red",
+  };
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+  render() {
+    return (
+      <ThemeContext.Provider value={this.state}>
+        <Header></Header>
+        <Body></Body>
+        <button
+          onClick={() => {
+            this.setState({ color: "red" });
+          }}
+        >
+          红色
+        </button>
+        <button
+          onClick={() => {
+            this.setState({ color: "green" });
+          }}
+        >
+          绿色
+        </button>
+      </ThemeContext.Provider>
+    );
+  }
+}
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+class Header extends React.Component {
+  render() {
+    return (
+      <ThemeContext.Consumer>
+        {(value) => {
+          return (
+            <div
+              style={{ border: `2px solid ${value.color}`, padding: "10px" }}
+            >
+              我是头部
+            </div>
+          );
+        }}
+      </ThemeContext.Consumer>
+    );
+  }
+}
+
+class Body extends React.Component {
+  render() {
+    return (
+      <ThemeContext.Consumer>
+        {(value) => {
+          return (
+            <div
+              style={{ border: `2px solid ${value.color}`, padding: "10px" }}
+            >
+              我是主体
+            </div>
+          );
+        }}
+      </ThemeContext.Consumer>
+    );
+  }
+}
+
+ReactDOM.render(<Home />, document.getElementById("root"));
