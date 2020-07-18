@@ -1,10 +1,12 @@
 function bindActionCreator(actionCreator, dispatch) {
-  dispatch(actionCreator());
-  return;
+  return () => {
+    dispatch(actionCreator());
+    return;
+  };
 }
 function bindActionCreators(actionCreators, dispatch) {
   if (typeof actionCreators === "function") {
-    return bindActionCreator;
+    return bindActionCreator(actionCreators, dispatch);
   }
   //   处理对象类型的 creators
   // actionCreators { add : fn(){}, minus: fn(){} }
@@ -20,11 +22,14 @@ function bindActionCreators(actionCreators, dispatch) {
   for (const key in actionCreators) {
     if (actionCreators.hasOwnProperty(key)) {
       const actionCreator = actionCreators[key];
+      // console.log("//actionCreators{add:fn -> actionCreator", actionCreator);
+
       if (typeof actionCreator === "function") {
         boundActionCreators[key] = bindActionCreator(actionCreator, dispatch);
       }
     }
   }
+  console.log(actionCreators);
 
   return boundActionCreators;
 }

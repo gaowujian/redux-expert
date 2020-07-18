@@ -3,14 +3,14 @@ import ReactDOM from "react-dom";
 import * as counter1Actions from "./redux/actions/counter1";
 import * as counter2Actions from "./redux/actions/counter2";
 
-import { createStore, bindActionCreators } from "redux";
+import { createStore, bindActionCreators } from "./redux";
 import rootReducer from "./redux/reducers";
 
 const store = createStore(rootReducer);
 
 // 当参数是function的时候
-// const add = bindActionCreators(counterActions.add, store.dispatch);
-// const minus = bindActionCreators(counterActions.minus, store.dispatch);
+// const add = bindActionCreators(counter1Actions.add, store.dispatch);
+// const minus = bindActionCreators(counter1Actions.minus, store.dispatch);
 
 // 当参数是对象的时候
 
@@ -27,7 +27,6 @@ class Counter1 extends React.Component {
   constructor() {
     super();
     this.state = store.getState().counter1;
-    console.log(this.state);
   }
   render() {
     return (
