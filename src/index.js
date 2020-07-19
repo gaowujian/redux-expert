@@ -12,7 +12,7 @@ export const store = createStore(rootReducer);
 export default store;
 ReactDOM.render(
   <Provider store={store}>
-    <Counter1 />
+    <Counter1 name="dd" />
     <br />
     <Counter2 />
   </Provider>,

@@ -1,23 +1,17 @@
 import React from "react";
 import { connect } from "../react-redux";
-import { store } from "../index";
-// import { boundCounter1Actions } from "../index";
 import * as counter1Actions from "../redux/actions/counter1";
-class Counter1 extends React.Component {
+import PureComponent from "../react-redux/PureComponent";
+class Counter1 extends PureComponent {
   constructor(props) {
     super(props);
+
     this.state = this.props.counter1;
+    // console.log(this.props);
   }
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps !== this.props) {
-      console.log(this.props);
-      console.log(nextProps);
-      return true;
-    } else {
-      return false;
-    }
-  }
+
   render() {
+    console.log("render1");
     return (
       <div>
         <h1>Counter案例</h1>
@@ -26,16 +20,6 @@ class Counter1 extends React.Component {
         <button onClick={this.props.minus}>-</button>
       </div>
     );
-  }
-
-  componentDidMount() {
-    this.unsubscribe = store.subscribe(() => {
-      this.setState(store.getState().counter1);
-    });
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe();
   }
 }
 
