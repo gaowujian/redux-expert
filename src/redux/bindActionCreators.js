@@ -29,7 +29,6 @@ function bindActionCreators(actionCreators, dispatch) {
       }
     }
   }
-  console.log(actionCreators);
 
   return boundActionCreators;
 }
