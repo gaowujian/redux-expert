@@ -1,10 +1,11 @@
-import { all, takeEvery, take, put, call, cps } from "redux-saga/effects";
+import { all, takeEvery, take, put, call, cps, fork } from "redux-saga/effects";
 import * as types from "../action-types";
 import Api from "./api";
 function* login(username, password) {
   try {
     const token = yield call(Api.login, username, password);
-    return token;
+    console.log(token);
+    yield put({ type: types.LOGIN_SUCCESS, payload: token });
   } catch (error) {
     alert(error);
     yield put({ type: types.LOGIN_FAIL, error });
@@ -16,13 +17,12 @@ export default function* () {
     const {
       payload: { username, password },
     } = yield take(types.LOGIN_REQUEST);
-    let token = yield call(login, username, password);
-    // 如果成功了就拿到了token
-    if (token) {
-      yield put({ type: types.LOGIN_SUCCESS, payload: token });
-      //一旦登录成功了就可以开始监听退出的动作
-      yield take(types.LOGOUT_REQUEST);
-      yield put({ type: types.LOGOUT_SUCCESS });
-    }
+
+    // 使用fork相当于是开启了一个子进程，并不会阻塞主要进程，登录之后，直接点击退出登录就可以执行退出操作
+    const task = yield fork(login, username, password);
+    console.log(task);
+    yield take(types.LOGOUT_REQUEST);
+
+    yield put({ type: types.LOGOUT_SUCCESS });
   }
 }

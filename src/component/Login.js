@@ -15,7 +15,9 @@ class Login extends Component {
     this.props.login(username, password);
   };
 
-  logout = () => {
+  logout = (e) => {
+    e.preventDefault();
+
     this.props.logout();
   };
   render() {
@@ -25,6 +27,7 @@ class Login extends Component {
         <input type="text" id="username" ref={this.usernameRef} />
         <label htmlFor="password">密码</label>
         <input type="text" id="password" ref={this.passwordRef} />
+        <button onClick={this.logout}>退出</button>
         <button onClick={this.login}>登录</button>
       </form>
     );

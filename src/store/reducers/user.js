@@ -14,6 +14,7 @@ export default (state = initialState, { type, payload, error }) => {
     case types.LOGOUT_SUCCESS: {
       return {};
     }
+
     default:
       return state;
   }
