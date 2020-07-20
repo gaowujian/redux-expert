@@ -9,6 +9,14 @@ export function* helloSaga() {
   yield console.log("hello");
 }
 
+// function delay(ms) {
+//   return new Promise((res) => {
+//     setTimeout(() => {
+//       res("ok");
+//     }, 1000);
+//   });
+// }
+
 function* incrementAsync() {
   const msg = yield delay(1000);
   console.log(msg);
@@ -23,6 +31,8 @@ export function* watchAsyncIncrement() {
 
 export default function* rootSaga() {
   // 类似promise all,执行完所有才会next
+  // all的返回值很简单
+  console.log(all([helloSaga(), watchAsyncIncrement()]));
   yield all([helloSaga(), watchAsyncIncrement()]);
   console.log("next");
 }
