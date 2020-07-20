@@ -1,4 +1,13 @@
-import { all, takeEvery, take, put, call, cps, fork } from "redux-saga/effects";
+import {
+  all,
+  takeEvery,
+  take,
+  put,
+  call,
+  cps,
+  fork,
+  cancel,
+} from "redux-saga/effects";
 import * as types from "../action-types";
 import Api from "./api";
 function* login(username, password) {
@@ -23,7 +32,11 @@ export default function* () {
     console.log(task);
     // 在没有登录的时候，去发送退出登录的请求，虽然能派发动作，但是不会被saga中间键处理，因为需要先要take到login request之后，才可能去准备take logout的
     // redux-logger是记录所有的action的，所以他是会一直去打印的
-    yield take(types.LOGOUT_REQUEST);
+    const action = yield take(types.LOGOUT_REQUEST);
+    // 发送了登录请求之后，如果立马去点击退出，会先拿到action的类型，判断，通过cancel方法，可以取消之前的task
+    if (action.type === types.LOGOUT_REQUEST) {
+      yield cancel(task);
+    }
     yield put({ type: types.LOGOUT_SUCCESS });
   }
 }
