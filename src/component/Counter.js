@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import * as actions from "../store/action";
+import * as actions from "../store/actions/counter";
 class Counter extends Component {
   render() {
     return (
