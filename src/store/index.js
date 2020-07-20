@@ -5,7 +5,7 @@ import rootSaga from "./sagas";
 import logger from "redux-logger";
 const sagaMiddleWare = createSagaMiddleware();
 
-const store = createStore(reducer, applyMiddleware(logger, sagaMiddleWare));
+const store = createStore(reducer, applyMiddleware(sagaMiddleWare));
 
 // sagamiddleware 是一个执行器
 // 内置co库，自动执行
