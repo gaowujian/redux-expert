@@ -7,17 +7,24 @@ import {
   cps,
   fork,
   cancel,
+  cancelled,
 } from "redux-saga/effects";
 import * as types from "../action-types";
 import Api from "./api";
 function* login(username, password) {
   try {
+    localStorage.setItem("isloading", true);
     const token = yield call(Api.login, username, password);
-    console.log(token);
     yield put({ type: types.LOGIN_SUCCESS, payload: token });
+    localStorage.setItem("isloading", false);
   } catch (error) {
     alert(error);
     yield put({ type: types.LOGIN_FAIL, error });
+    localStorage.setItem("isloading", false);
+  } finally {
+    if (yield cancelled()) {
+      localStorage.setItem("isloading", false);
+    }
   }
 }
 export default function* () {
