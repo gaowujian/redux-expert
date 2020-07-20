@@ -6,7 +6,7 @@ export default {
           //返回用户名和时间当做token
           res(username + Date.now());
         } else {
-          rej("fail");
+          rej("登录失败");
         }
       }, 1000);
     });

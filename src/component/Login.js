@@ -12,7 +12,6 @@ class Login extends Component {
     e.preventDefault();
     let username = this.usernameRef.current.value;
     let password = this.passwordRef.current.value;
-    console.dir(this.usernameRef.current);
     this.props.login(username, password);
   };
 
