@@ -1,5 +1,4 @@
 import { all, takeEvery, put, call, cps } from "redux-saga/effects";
-import * as types from "../action-types";
 import helloSaga from "./helloSaga";
 import watchAsyncIncrement from "./watchAsyncIncrement";
 import { readFile } from "./utils";
@@ -10,7 +9,7 @@ import { readFile } from "./utils";
 // 3. worker saga 真正执行任务的saga
 
 const readFiles = function* () {
-  const msg = yield cps(readFile, "hh");
+  const msg = yield cps(readFile, "filename");
   console.log(msg);
 };
 

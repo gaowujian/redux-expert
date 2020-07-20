@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import * as actions from "../store/action";
 class Counter extends Component {
   render() {
-    console.log(this.props);
     return (
       <div>
         <p>{this.props.number}</p>

@@ -1,15 +1,32 @@
-import { all, takeEvery, put, call } from "redux-saga/effects";
+import { all, takeEvery, put, call, take, select } from "redux-saga/effects";
 import * as types from "../action-types";
 import { delay } from "./utils";
-function* incrementAsync() {
-  const obj = { name: "tony" };
-  const msg = yield call([obj, delay], 1000);
-  console.log(msg);
-  yield put({ type: types.INCREAMENT });
+function* incrementAsync() {}
+
+function* watchAsyncIncrement() {
+  for (let i = 0; i < 3; i++) {
+    //   监听一次 asyncIncreament动作，如果有人向仓库派发了动作，向下继续执行
+    // take函数的参数就是一个动作类型
+    const action = yield take(types.ASYNCINCREAMENT);
+    console.log(action);
+    yield put({ type: types.INCREAMENT });
+  }
+  alert("最多执行三次");
 }
 
-export default function* watchAsyncIncrement() {
-  // 监听每一次的async increment动作，每当有用户向仓库派发这个动作，就会有worker saga去执行任务
-  // 每当yield一个值，也被称作effect,就相当于是告诉中间件进行某些处理
-  yield takeEvery(types.ASYNCINCREAMENT, incrementAsync);
+function* watchAndCLog() {
+  while (true) {
+    let action = yield take("*");
+    console.log(action);
+    // 如何在saga中获取最新的状态树
+    let state = yield select((state) => state.counter);
+    console.log("state", state);
+  }
+}
+
+export default function* rootSaga() {
+  // 监听每个动作，发送之后打印log
+  // 监听异步加1的动作
+  //   all使用的时候必须是一个数组
+  yield all([watchAndCLog(), watchAsyncIncrement()]);
 }
