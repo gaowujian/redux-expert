@@ -6,3 +6,9 @@ export function delay(ms) {
     }, ms);
   });
 }
+
+export function readFile(filename, callback) {
+  setTimeout(() => {
+    callback(null, filename + "content");
+  }, 1000);
+}
