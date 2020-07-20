@@ -1,4 +1,4 @@
-import { all, takeEvery, delay, put } from "redux-saga/effects";
+import { all, takeEvery, put, call } from "redux-saga/effects";
 import * as types from "./action-types";
 // saga分三种 (餐厅大门是rootsaga 服务员是watcher saga 厨师是worker saga)
 // 1. root saga 用来组织和调用别的saga, (generator)
@@ -9,16 +9,18 @@ export function* helloSaga() {
   yield console.log("hello");
 }
 
-// function delay(ms) {
-//   return new Promise((res) => {
-//     setTimeout(() => {
-//       res("ok");
-//     }, 1000);
-//   });
-// }
+function delay(ms) {
+  return new Promise((res) => {
+    setTimeout(() => {
+      res("ok");
+      console.log(this.name);
+    }, ms);
+  });
+}
 
 function* incrementAsync() {
-  const msg = yield delay(1000);
+  const obj = { name: "tony" };
+  const msg = yield call([obj, delay], 1000);
   console.log(msg);
   yield put({ type: types.INCREAMENT });
 }
