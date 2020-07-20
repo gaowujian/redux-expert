@@ -1,10 +1,3 @@
 export const INCREAMENT = "INCREAMENT";
 export const ASYNCINCREAMENT = "ASYNCINCREAMENT";
 export const DECREAMENT = "DECREAMENT";
-
-// 登录退出动作
-export const LOGIN_REQUEST = "LOGIN_REQUEST";
-export const LOGIN_FAIL = "LOGIN_FAIL";
-export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
-export const LOGOUT_REQUEST = "LOGOUT_REQUEST";
-export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
