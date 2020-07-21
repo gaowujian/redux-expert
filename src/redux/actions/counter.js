@@ -5,3 +5,11 @@ export const add = function () {
 export const minus = function () {
   return { type: "minus" };
 };
+
+export const asyncAdd = function () {
+  return function (dispatch) {
+    setTimeout(() => {
+      dispatch({ type: "add" });
+    }, 1000);
+  };
+};
