@@ -8,6 +8,7 @@ export default function* () {
     const action = yield take(types.ASYNCINCREAMENT);
     console.log(action);
     yield put({ type: types.INCREAMENT });
+    console.log("完成一次循环");
   }
   alert("最多执行三次");
 }

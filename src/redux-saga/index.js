@@ -6,14 +6,15 @@ export default function createSagaMiddleware() {
       observer[actionType] = callback;
     }
     function publish(action) {
-      console.log(observer);
-      debugger;
+      // console.log(observer);
+      // debugger;
       if (observer[action.type]) {
         //   为了实现take只能监听一次的效果，先保存方法，然后删除，再去调用
         let next = observer[action.type];
         delete observer[action.type];
         // 然后又把action传回给了下边的next方法，然后当调用  let { value: effect, done } = it.next(action);的时候，代码会从yield向下执行
         // 这个时候，传递给 it.next()的action值，会被作为yield表达式的返回值传给外面
+        // console.log(action);
         next(action);
       }
     }
@@ -34,6 +35,7 @@ export default function createSagaMiddleware() {
         //  第一次获取的yield结果 value= {type:"TAKE",actionType:ASYNC_INCREMENT}
         // type是effect类型，actionType是动作类型
         let { value: effect, done } = it.next(action);
+        console.log(action);
         console.log(effect);
         if (!done) {
           switch (effect.type) {
@@ -42,6 +44,8 @@ export default function createSagaMiddleware() {
             // 当点击按钮的时候，会触发这个订阅，在下面中使用channel.publish方法
             //  如果触发这个ASYNC_INCREMENT的时候，会去执行相应的回调
             case "TAKE":
+              // 注册的时候把next方法，当做callback放进了观察者对象中
+              // 当发布事件的时候，再把对象穿回来这个next方法，然后调用it.next实现了当监听动作发生后，generator会向下执行的功能
               channel.subscribe(effect.actionType, next);
               break;
             // 如果是put，直接去派发动作
@@ -62,7 +66,6 @@ export default function createSagaMiddleware() {
     return function (next) {
       return function (action) {
         //   通过管道派发一个动作, 然后执行去看publish方法
-        console.log(action);
         channel.publish(action);
         next(action);
       };
