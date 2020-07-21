@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-import { createStore, applyMiddleware } from "redux";
+import { createStore } from "redux";
+import applyMiddleware from "./redux/applyMiddleware";
 import rootReducer from "./redux/reducers";
 import * as actions from "./redux/actions/counter";
 import Counter from "./components/Counter";
