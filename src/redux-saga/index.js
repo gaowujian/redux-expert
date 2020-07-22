@@ -3,11 +3,12 @@ export default function createSagaMiddleware() {
   function createChannel() {
     let observer = {};
     function subscribe(actionType, callback) {
+      // {ASYNCINCREMENT:callback}  callback是一个next方法，可以用来调用it.next用于
+      // generator的自执行
       observer[actionType] = callback;
     }
     function publish(action) {
-      // console.log(observer);
-      // debugger;
+      // action=> {type:ASYNCINCREMENT}
       if (observer[action.type]) {
         //   为了实现take只能监听一次的效果，先保存方法，然后删除，再去调用
         let next = observer[action.type];
@@ -31,9 +32,13 @@ export default function createSagaMiddleware() {
       console.log("开始自动执行这个generator");
       let it = generator();
       function next(action) {
-        //  第一次执行的时候action是undefined
-        //  第一次获取的yield结果 value= {type:"TAKE",actionType:ASYNC_INCREMENT}
+        // it.next()返回的值是yield 后面表达式的值
+        //  第一次执行的时候系统自动执行，action是undefined
+        //  第一次 effect是 {type: "TAKE", actionType: "ASYNCINCREAMENT"}
         // type是effect类型，actionType是动作类型
+        // 当点击按钮之后, 会派发一个动作，然后发布事件，然后从观察者对象中拿到对应类型注册的方法去执行，进入next方法
+        // action传进来的是 {type: "ASYNCINCREAMENT"}
+        // 第二次effect是 {type: "PUT", action: {type: "INCREAMENT"} }
         let { value: effect, done } = it.next(action);
         console.log(action);
         console.log(effect);
@@ -59,6 +64,8 @@ export default function createSagaMiddleware() {
         }
       }
       //   第一次执行，next没有传参
+      //  第一次执行的时候，next的时候，会去调用it.next，相当于用户点击已经是第二次it.next()了，
+      // 所以这个时候给it.next()传值，值会被赋给第一个yield左边的表达式
       next();
     }
     sagaMiddleware.run = run;
@@ -66,6 +73,7 @@ export default function createSagaMiddleware() {
     return function (next) {
       return function (action) {
         //   通过管道派发一个动作, 然后执行去看publish方法
+        // action {type:ASYNCINCREMENT}
         channel.publish(action);
         next(action);
       };
