@@ -24,6 +24,21 @@ export default function createSagaMiddleware() {
 
   let channel = createChannel();
 
+  // redux saga的中心思想就是通过自己的effect库，创建不同的effects对象，也是普通的js对象，effect对象是yield表达式的返回值
+  // 然后派发动作的时候，saga中间件，首先会拿到这个action，然后执行一次it.next（）让生成器函数向下执行，同时可以给it.next()添加
+  // 参数，作为上一个yield表达式左边参数的值
+
+  // 初始化阶段：
+  // redux-saga先创建了一个内部有发布订阅机制的中间件，然后放到中间键数组中去，之后传入root saga并执行run方法，
+  // 内部相当于是对这个root saga执行了一次 next的调用， const it = rootSaga()  it.next()
+  // 初始化的时候，传入的 action是 undefined   it.next(undefined) 的返回结果 effect是 {type: "TAKE", actionType: "ASYNCINCREAMENT"}
+  // 然后判断类型是什么？  如果是 TAKE 则创建了一个事件订阅，等待被发布
+
+  // 派发阶段
+  // 当点击了按钮之后，会dispatch一个动作，这个中间件接受到的参数action是 {type: "ASYNCINCREAMENT"}
+  // 然后调用it.next方法，所以generator得意继续向下执行，同时yiled左边的表达式拿到  {type: "ASYNCINCREAMENT"}的返回值
+  // it.next( {type: "ASYNCINCREAMENT"})的返回结果是  effect= {type: "PUT", action: {type: "INCREAMENT"} }
+  // 然后去switch中判断处理逻辑，如果类型是put，那么直接派发动作去修改仓库，并执行next方法
   function sagaMiddleware({ getState, dispatch }) {
     //   把整个run方法放进sagaMiddleware中，所以内部代码可以拿到dispatch
     // 参数是一个generator函数
@@ -31,8 +46,12 @@ export default function createSagaMiddleware() {
       //   自动执行generator
       console.log("开始自动执行这个generator");
       let it = generator();
+      // 第一次执行，next没有传参
+      // 第一次执行的时候，会去调用it.next，相当于用户点击已经是第二次it.next()了，
+      // 所以这个时候给it.next()传值，值会被赋给第一个yield左边的表达式
+      next();
       function next(action) {
-        // it.next()返回的值是yield 后面表达式的值
+        //  it.next()返回的值是yield 后面表达式的值
         //  第一次执行的时候系统自动执行，action是undefined
         //  第一次 effect是 {type: "TAKE", actionType: "ASYNCINCREAMENT"}
         // type是effect类型，actionType是动作类型
@@ -63,10 +82,6 @@ export default function createSagaMiddleware() {
           }
         }
       }
-      //   第一次执行，next没有传参
-      //  第一次执行的时候，next的时候，会去调用it.next，相当于用户点击已经是第二次it.next()了，
-      // 所以这个时候给it.next()传值，值会被赋给第一个yield左边的表达式
-      next();
     }
     sagaMiddleware.run = run;
 
