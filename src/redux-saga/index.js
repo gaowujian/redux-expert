@@ -24,9 +24,10 @@ export default function createSagaMiddleware() {
 
   let channel = createChannel();
 
-  // redux saga的中心思想就是通过自己的effect库，创建不同的effects对象，也是普通的js对象，effect对象是yield表达式的返回值
-  // 然后派发动作的时候，saga中间件，首先会拿到这个action，然后执行一次it.next（）让生成器函数向下执行，同时可以给it.next()添加
-  // 参数，作为上一个yield表达式左边参数的值
+  // redux saga的中心思想就是先去执行一遍rootSaga，遇到take相关指令就去注册事件订阅，然后每当有动作派发，saga执行的操作就是去直接
+  // 发布事件订阅，看有没有事件在之前订阅过，若果有的话就直接把这个动作传给 saga中间件内部的generator执行逻辑去判断
+  // 首先是先要去执行一次it.next() 让生成器函数向下执行，可以把action传给it.next（）作为上一个yield左边变量的值
+  // 所以 总有 const action = yield take()  因为take监听的动作被触发了，内部拿到了action，又通过it.next(action)传了回来
 
   // 初始化阶段：
   // redux-saga先创建了一个内部有发布订阅机制的中间件，然后放到中间键数组中去，之后传入root saga并执行run方法，
@@ -36,9 +37,9 @@ export default function createSagaMiddleware() {
 
   // 派发阶段
   // 当点击了按钮之后，会dispatch一个动作，这个中间件接受到的参数action是 {type: "ASYNCINCREAMENT"}
-  // 然后调用it.next方法，所以generator得意继续向下执行，同时yiled左边的表达式拿到  {type: "ASYNCINCREAMENT"}的返回值
+  // 然后调用it.next( {type: "ASYNCINCREAMENT"})方法，所以generator得意继续向下执行，同时yiled左边的表达式拿到  {type: "ASYNCINCREAMENT"}
   // it.next( {type: "ASYNCINCREAMENT"})的返回结果是  effect= {type: "PUT", action: {type: "INCREAMENT"} }
-  // 然后去switch中判断处理逻辑，如果类型是put，那么直接派发动作去修改仓库，并执行next方法
+  // 然后去switch中判断effects对象是哪一种类型，如果类型是put，那么直接派发动作去修改仓库，并执行next方法，向下执行
   function sagaMiddleware({ getState, dispatch }) {
     //   把整个run方法放进sagaMiddleware中，所以内部代码可以拿到dispatch
     // 参数是一个generator函数
@@ -53,11 +54,11 @@ export default function createSagaMiddleware() {
       function next(action) {
         //  it.next()返回的值是yield 后面表达式的值
         //  第一次执行的时候系统自动执行，action是undefined
-        //  第一次 effect是 {type: "TAKE", actionType: "ASYNCINCREAMENT"}
+        //  第一次 effect是 yield表达式的返回值 就是 {type: "TAKE", actionType: "ASYNCINCREAMENT"}
         // type是effect类型，actionType是动作类型
         // 当点击按钮之后, 会派发一个动作，然后发布事件，然后从观察者对象中拿到对应类型注册的方法去执行，进入next方法
         // action传进来的是 {type: "ASYNCINCREAMENT"}
-        // 第二次effect是 {type: "PUT", action: {type: "INCREAMENT"} }
+        // 第二次effect是 第二个yield表达式的返回值 就是{type: "PUT", action: {type: "INCREAMENT"} }
         let { value: effect, done } = it.next(action);
         console.log(action);
         console.log(effect);
@@ -75,7 +76,7 @@ export default function createSagaMiddleware() {
             // 如果是put，直接去派发动作
             case "PUT":
               dispatch(effect.action);
-              // put是同步的操作，执行完之后直接向下走
+              // put是同步的操作，所以执行完之后直接调用一次next方法进去，然后next方法里会调用it.next(), 函数会自动向下执行
               next();
             default:
               break;
