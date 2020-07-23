@@ -46,7 +46,11 @@ export default function createSagaMiddleware() {
     function run(generator) {
       //   自动执行generator
       console.log("开始自动执行这个generator");
-      let it = generator();
+      // 支持传入迭代器，如果是传入的是生成器要执行再赋值，如果是迭代器直接赋值
+      let it =
+        typeof generator[Symbol.iterator] === "function"
+          ? generator
+          : generator();
       // 第一次执行，next没有传参
       // 第一次执行的时候，会去调用it.next，相当于用户点击已经是第二次it.next()了，
       // 所以这个时候给it.next()传值，值会被赋给第一个yield左边的表达式
@@ -60,26 +64,30 @@ export default function createSagaMiddleware() {
         // action传进来的是 {type: "ASYNCINCREAMENT"}
         // 第二次effect是 第二个yield表达式的返回值 就是{type: "PUT", action: {type: "INCREAMENT"} }
         let { value: effect, done } = it.next(action);
-        console.log(action);
-        console.log(effect);
+
         if (!done) {
-          switch (effect.type) {
-            //  take是用来监听动作，如果动作执行了，向下继续执行
-            // 需要去等待事件的发生，先注册订阅
-            // 当点击按钮的时候，会触发这个订阅，在下面中使用channel.publish方法
-            //  如果触发这个ASYNC_INCREMENT的时候，会去执行相应的回调
-            case "TAKE":
-              // 注册的时候把next方法，当做callback放进了观察者对象中
-              // 当发布事件的时候，再把对象穿回来这个next方法，然后调用it.next实现了当监听动作发生后，generator会向下执行的功能
-              channel.subscribe(effect.actionType, next);
-              break;
-            // 如果是put，直接去派发动作
-            case "PUT":
-              dispatch(effect.action);
-              // put是同步的操作，所以执行完之后直接调用一次next方法进去，然后next方法里会调用it.next(), 函数会自动向下执行
-              next();
-            default:
-              break;
+          if (typeof effect[Symbol.iterator] === "function") {
+            run(effect);
+            next();
+          } else {
+            switch (effect.type) {
+              //  take是用来监听动作，如果动作执行了，向下继续执行
+              // 需要去等待事件的发生，先注册订阅
+              // 当点击按钮的时候，会触发这个订阅，在下面中使用channel.publish方法
+              //  如果触发这个ASYNC_INCREMENT的时候，会去执行相应的回调
+              case "TAKE":
+                // 注册的时候把next方法，当做callback放进了观察者对象中
+                // 当发布事件的时候，再把对象穿回来这个next方法，然后调用it.next实现了当监听动作发生后，generator会向下执行的功能
+                channel.subscribe(effect.actionType, next);
+                break;
+              // 如果是put，直接去派发动作
+              case "PUT":
+                dispatch(effect.action);
+                // put是同步的操作，所以执行完之后直接调用一次next方法进去，然后next方法里会调用it.next(), 函数会自动向下执行
+                next();
+              default:
+                break;
+            }
           }
         }
       }
