@@ -19,6 +19,8 @@ export default function createSagaMiddleware() {
         next(action);
       }
     }
+    // 创建一个全局的observer，方便调试
+    window.observer = observer;
     return { publish, subscribe };
   }
 
@@ -98,6 +100,7 @@ export default function createSagaMiddleware() {
       return function (action) {
         //   通过管道派发一个动作, 然后执行去看publish方法
         // action {type:ASYNCINCREMENT}
+        console.log("派发动作" + JSON.stringify(action));
         channel.publish(action);
         next(action);
       };

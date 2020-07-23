@@ -10,9 +10,12 @@ export default function* () {
     // take函数的参数就是一个动作类型
     debugger;
     const action = yield take(types.ASYNCINCREAMENT);
-    console.log(action);
+    console.log("动作派发后saga接受到it.next()返回值" + JSON.stringify(action));
     const action2 = yield increment();
-    console.log(action2);
+    console.log(
+      "动作派发后saga接受到it.next()返回值" + JSON.stringify(action2)
+    );
+
     console.log("完成一次循环");
   }
   alert("最多执行三次");
