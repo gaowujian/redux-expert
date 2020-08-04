@@ -17,7 +17,7 @@ app.model({
     number: 20,
   },
   reducers: {
-    "counter/add"(state) {
+    add(state) {
       return { ...state, number: state.number + 1 };
     },
   },
