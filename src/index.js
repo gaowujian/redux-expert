@@ -22,9 +22,12 @@ app.model({
     },
   },
   effects: {
+    // 原理就是去监听 counter/asyncAdd的方法, 监听到了这个saga
+    // TakeEvery("counter/asyncAdd",*asyncAdd(action,effects))
     *asyncAdd(state, { call, put }) {
+      console.log("11");
       yield delay(1000);
-      yield put({ type: "counter/add" });
+      yield put({ type: "add" });
     },
   },
 });

@@ -3,7 +3,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { createHashHistory } from "history";
 import { Provider, connect } from "react-redux";
-import { createStore, combineReducers } from "redux";
+import { createStore, combineReducers, applyMiddleware } from "redux";
+import createSagaMiddleware from "redux-saga";
+import * as sagaEffects from "redux-saga/effects";
+
 export { connect };
 export default function (opts = {}) {
   const history = opts.history || createHashHistory();
@@ -23,7 +26,11 @@ export default function (opts = {}) {
   }
   function start(containerId) {
     const reducers = getReducers(app);
-    app._store = createStore(reducers);
+
+    const sagaMiddleware = createSagaMiddleware();
+    app._store = createStore(reducers, applyMiddleware(sagaMiddleware));
+    const sagas = getSagas(app);
+    sagaMiddleware.run(sagas);
     ReactDOM.render(
       <Provider store={app._store}>{app._router()}</Provider>,
       document.querySelector(containerId)
@@ -67,4 +74,22 @@ function prefixedNamespace(model) {
     return memo;
   }, {});
   return model;
+}
+
+// 需要把每一个effect都转换成一个saga然后让saga中间件去监听
+function getSagas(app) {
+  const sagas = [];
+  for (const model of app.models) {
+    sagas.push(function* () {
+      for (const key in model.effects) {
+        const watcher = getWatcher(key, model.effects[key], model);
+        yield sagaEffects.fork(watcher);
+      }
+    });
+  }
+  return sagas;
+}
+
+function getWatcher(params) {
+  return function* (params) {};
 }
