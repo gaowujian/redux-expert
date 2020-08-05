@@ -120,6 +120,15 @@ function getWatcher(key, effect, model) {
     //key counter/asyncAdd
     yield sagaEffects.takeEvery(key, function* (...args) {
       // 这边是去重写put方法 使得 effects中可以用 put({type:add})去触发 reducer中的 counter/add
+      // effect就相当于是一个saga
+
+      // 如果是用takeEvery的话，可以获得action的全称然后给saga函数传递进去，所以...args里就有了  console.log(args); type: "counter/asyncAdd"
+      // const takeEvery = (pattern, saga, ...args) => fork(function*() {
+      //   while (true) {
+      //     const action = yield take(pattern)
+      //     yield fork(saga, ...args.concat(action))
+      //   }
+      // })
       yield effect(...args, { ...sagaEffects, put: put });
     });
   };
