@@ -1,0 +1,11 @@
+.link {
+  display: inline-block;
+  height: 50px;
+  width: 200px;
+  text-decoration: none;
+}
+
+.link.active {
+  background-color: orange;
+  color: white;
+}
