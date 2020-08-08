@@ -14,13 +14,13 @@ class App extends Component {
     return (
       <Provider store={store}>
         <ConnectedRouter history={history}>
-          <NavLink to="/home" className="link">
+          <NavLink to="/" exact className="link">
             home
           </NavLink>
           <NavLink to="/counter" className="link">
             counter
           </NavLink>
-          <Route path="/home" exact component={Home}></Route>
+          <Route path="/" exact component={Home}></Route>
           <Route path="/counter" exact component={Counter}></Route>
         </ConnectedRouter>
       </Provider>

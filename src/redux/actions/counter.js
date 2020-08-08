@@ -1,5 +1,5 @@
 import * as types from "../actionType";
-import { push } from "connected-react-router";
+import { push } from "../../connected-react-router";
 export const add = (payload) => ({
   type: types.ADD,
   payload,

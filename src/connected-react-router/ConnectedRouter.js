@@ -1,6 +1,6 @@
 // 监听路径的变化，如果路径有变化就想仓库中去派发一个路径改变的动作
 import React from "react";
-import Router from "react-router-dom";
+import { Router } from "react-router-dom";
 import { connect, ReactReduxContext } from "react-redux";
 import { LOCATION_CHANGE } from "connected-react-router";
 
