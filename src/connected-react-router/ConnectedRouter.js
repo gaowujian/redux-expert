@@ -11,7 +11,7 @@ class ConnectedRouter extends React.Component {
     // 每当路径变化之后都会执行该函数
     // 这个action和redux中的action不是一回事，而是给history的action
     // 包括 push pops
-    this.props.history.listen((location, action) => {
+    this.unlistener = this.props.history.listen((location, action) => {
       // 通过上下文来接受store中传下来的方法
       this.context.store.dispatch({
         type: LOCATION_CHANGE,
@@ -21,6 +21,9 @@ class ConnectedRouter extends React.Component {
         },
       });
     });
+  }
+  componentWillMount() {
+    this.unlistener();
   }
   render() {
     const { history, children } = this.props;
