@@ -11,11 +11,32 @@ function Counter1() {
     <div>
       <p>number:{state.number}</p>
       <button
-        onClick={() => {
-          dispatch({ type: ADD1 });
+        onClick={function promiseClick() {
+          console.log("dispatch:", dispatch);
+          debugger;
+          dispatch(
+            new Promise(function promise11(resolve, reject) {
+              setTimeout(() => {
+                resolve({ type: ADD1 });
+              }, 1000);
+            })
+          );
         }}
       >
-        +
+        promise +
+      </button>
+      <br />
+      <button
+        onClick={function thunkClick() {
+          dispatch(function thunkAction1(storeDispatch) {
+            debugger;
+            setTimeout(function thunkAction2() {
+              storeDispatch({ type: ADD1 });
+            }, 1000);
+          });
+        }}
+      >
+        thunk +
       </button>
       <br />
       <button
