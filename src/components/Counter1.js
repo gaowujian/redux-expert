@@ -1,48 +1,31 @@
-import React, { Component } from "react";
-import store from "../store";
-import { bindActionCreators } from "../redux";
-import { counter1Actions } from "../store/actions";
-const bindActions = bindActionCreators(counter1Actions, store.dispatch);
+import React from "react";
+import { useSelector, useDispatch } from "../react-redux";
+import { ADD1, MINUS1 } from "../store/action-types";
+function Counter1() {
+  const dispatch = useDispatch();
+  const state = useSelector((state) => {
+    return state.c1;
+  });
 
-class Counter1 extends Component {
-  constructor() {
-    super();
-
-    this.state = {
-      number: store.getState().c1.number,
-    };
-  }
-
-  componentDidMount() {
-    // 订阅，只要有action触发了就去触发回调函数
-    this.unsubscribe = store.subscribe(() => {
-      this.setState({ number: store.getState().c1.number });
-    });
-  }
-  componentWillUnmount() {
-    this.unsubscribe();
-  }
-  render() {
-    return (
-      <div>
-        <p>number:{this.state.number}</p>
-        <button
-          onClick={() => {
-            bindActions.add();
-          }}
-        >
-          +
-        </button>
-        <br />
-        <button
-          onClick={() => {
-            bindActions.minus();
-          }}
-        >
-          -
-        </button>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <p>number:{state.number}</p>
+      <button
+        onClick={() => {
+          dispatch({ type: ADD1 });
+        }}
+      >
+        +
+      </button>
+      <br />
+      <button
+        onClick={() => {
+          dispatch({ type: MINUS1 });
+        }}
+      >
+        -
+      </button>
+    </div>
+  );
 }
 export default Counter1;
