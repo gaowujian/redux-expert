@@ -1,10 +1,14 @@
-import React, { Component } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
+import Counter1 from "./componnts/Counter1";
+import Counter2 from "./componnts/Counter2";
 
-class App extends Component {
-  render() {
-    return <div>home</div>;
-  }
+function App() {
+  return (
+    <div>
+      <Counter1 />
+      <Counter2 />
+    </div>
+  );
 }
-
 ReactDOM.render(<App />, document.getElementById("root"));
