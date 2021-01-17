@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import store from "../store";
-import { bindActionCreators } from "../redux/index";
-import count1Actions from "../store/actions/counter1";
-const bindActions = bindActionCreators(count1Actions, store.dispatch);
+import { bindActionCreators } from "../redux";
+import { counter1Actions } from "../store/actions";
+const bindActions = bindActionCreators(counter1Actions, store.dispatch);
 
 class Counter1 extends Component {
   constructor() {
