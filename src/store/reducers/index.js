@@ -1,7 +1,8 @@
-import { combineReducers } from "../../redux";
-import counter1 from "./reducer1";
-import counter2 from "./reducer2";
+import { combineReducers } from "redux";
+import { connectRouter } from "../../connected-react-router";
+import counter from "./counter";
+import history from "../../history";
 export default combineReducers({
-  c1: counter1,
-  counter2,
+  counter,
+  router: connectRouter(history),
 });
