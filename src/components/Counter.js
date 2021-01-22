@@ -1,5 +1,4 @@
 import React from "react";
-import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { counterAction } from "../store/actions";
 
@@ -14,14 +13,15 @@ function About() {
           dispatch(counterAction.add());
         }}
       >
-        +
+        同步+1
       </button>
+      <br />
       <button
         onClick={() => {
-          dispatch(counterAction.goHome("/"));
+          dispatch(counterAction.asyncAdd());
         }}
       >
-        跳转到首页
+        异步+1
       </button>
     </div>
   );
