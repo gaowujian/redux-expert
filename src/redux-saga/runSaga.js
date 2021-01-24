@@ -4,7 +4,6 @@ import * as effectTypes from "./effectTypes";
 // 2. 还可能需要去监听一些动作 channel
 function runSaga(env, saga) {
   const { dispatch, channel } = env;
-  debugger;
 
   const it = typeof saga === "function" ? saga() : saga;
   function next(value) {
